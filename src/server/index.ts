@@ -9,6 +9,8 @@ import { connectToMongoDB } from './db/mongodb';
 import trackRouter from './routes/track';
 import trackerRouter from './routes/tracker';
 import staticRouter from './routes/static';
+import tracksRouter from './routes/tracks';
+import tracksScriptRouter from './routes/tracks-script';
 
 // Create Express applications for each port
 const trackerApp = express();
@@ -20,16 +22,16 @@ trackerApp.use(
     contentSecurityPolicy: false, // Disable CSP for simplicity in this example
   })
 );
-// Get CORS origins from environment variable or use default
-const corsOrigins = process.env.CORS_ORIGINS 
-  ? process.env.CORS_ORIGINS.split(',') 
+// Get CORS origins from the environment variable or use default
+const corsOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',')
   : [`http://localhost:${STATIC_PORT}`, `http://127.0.0.1:${STATIC_PORT}`];
 
 trackerApp.use(
   cors({
     origin: corsOrigins,
     credentials: true,
-    methods: ['GET', 'POST', 'OPTIONS'],
+    methods: ['GET', 'POST', 'OPTIONS', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
@@ -47,6 +49,8 @@ staticApp.use(cors());
 // Register routes
 trackerApp.use('/tracker', trackerRouter);
 trackerApp.use('/track', trackRouter);
+trackerApp.use('/tracks', tracksRouter);
+trackerApp.use('/tracks-script', tracksScriptRouter);
 staticApp.use('/', staticRouter);
 
 // Health check endpoint

@@ -93,9 +93,27 @@ export async function getTrackEvents(
   }
 
   try {
-    return await tracksCollection.find(filter).limit(limit).toArray();
+    return await tracksCollection.find(filter).sort({ ts: -1 }).limit(limit).toArray();
   } catch (error) {
     console.error('Failed to get track events', error);
+    throw error;
+  }
+}
+
+/**
+ * Delete all tracking events
+ * @returns Number of deleted events
+ */
+export async function deleteAllTrackEvents(): Promise<number> {
+  if (!tracksCollection) {
+    throw new Error('MongoDB not initialized');
+  }
+
+  try {
+    const result = await tracksCollection.deleteMany({});
+    return result.deletedCount;
+  } catch (error) {
+    console.error('Failed to delete track events', error);
     throw error;
   }
 }

@@ -1,3 +1,5 @@
+import { Tracker, TrackEvent } from '../types';
+
 /**
  * Client-side tracker implementation
  */
@@ -7,29 +9,6 @@ declare global {
   interface Window {
     tracker: Tracker;
   }
-}
-
-/**
- * Interface for the tracker
- */
-interface Tracker {
-  /**
-   * Track an event with optional tags
-   * @param event The name of the event
-   * @param tags Optional tags associated with the event
-   */
-  track(event: string, ...tags: string[]): void;
-}
-
-/**
- * Interface for a tracking event
- */
-interface TrackEvent {
-  event: string;
-  tags: string[];
-  url: string;
-  title: string;
-  ts: number;
 }
 
 /**
@@ -53,8 +32,12 @@ class TrackerImpl implements Tracker {
     // Use environment variables with fallbacks
     // These will be replaced during build time
     endpoint = process.env.TRACKER_ENDPOINT || '/track',
-    minEventsToSend = process.env.MIN_EVENTS_TO_SEND ? parseInt(process.env.MIN_EVENTS_TO_SEND, 10) : 3,
-    minTimeBetweenSends = process.env.MIN_TIME_BETWEEN_SENDS ? parseInt(process.env.MIN_TIME_BETWEEN_SENDS, 10) : 1000
+    minEventsToSend = process.env.MIN_EVENTS_TO_SEND
+      ? parseInt(process.env.MIN_EVENTS_TO_SEND, 10)
+      : 3,
+    minTimeBetweenSends = process.env.MIN_TIME_BETWEEN_SENDS
+      ? parseInt(process.env.MIN_TIME_BETWEEN_SENDS, 10)
+      : 1000
   ) {
     this.endpoint = endpoint;
     this.minEventsToSend = minEventsToSend;

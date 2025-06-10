@@ -15,8 +15,8 @@ const router = Router();
 router.get('/', (_req: Request, res: Response) => {
   try {
     // Paths to the compiled tracker files
-    const indexPath = path.join(__dirname, '../../../dist/tracker/index.js');
-    const trackerImplPath = path.join(__dirname, '../../../dist/tracker/tracker.js');
+    const indexPath = path.join(__dirname, '../../../dist/tracker/tracker/index.js');
+    const trackerImplPath = path.join(__dirname, '../../../dist/tracker/tracker/tracker.js');
 
     // Check if files exist
     if (!fs.existsSync(indexPath)) {

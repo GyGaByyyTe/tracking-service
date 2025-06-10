@@ -6,6 +6,8 @@
   "scripts": {
     "build": "tsc",
     "build:tracker": "tsc -p tsconfig.tracker.json",
+    "build:tracks": "tsc -p tsconfig.tracks.json",
+    "build:frontend": "npm run build:tracker && npm run build:tracks",
     "start": "node dist/server/index.js",
     "dev": "ts-node-dev --respawn src/server/index.ts",
     "lint": "eslint . --ext .ts",
