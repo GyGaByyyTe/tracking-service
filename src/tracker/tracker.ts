@@ -53,7 +53,7 @@ class TrackerImpl implements Tracker {
   constructor(
     // Use environment variables with fallbacks
     // These will be replaced during build time
-    endpoint = process.env.TRACKER_ENDPOINT || 'http://localhost:8888/track',
+    endpoint = process.env.TRACKER_ENDPOINT || '/track',
     minEventsToSend = process.env.MIN_EVENTS_TO_SEND ? parseInt(process.env.MIN_EVENTS_TO_SEND, 10) : 3,
     minTimeBetweenSends = process.env.MIN_TIME_BETWEEN_SENDS ? parseInt(process.env.MIN_TIME_BETWEEN_SENDS, 10) : 1000
   ) {

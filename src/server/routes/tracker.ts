@@ -46,7 +46,13 @@ router.get('/', (_req: Request, res: Response) => {
       // Create a module system for the browser
       var exports = {};
       var module = { exports: exports };
-      var process = { env: {} };
+      var process = { 
+        env: { 
+          TRACKER_ENDPOINT: "${process.env.TRACKER_ENDPOINT || '/track'}",
+          MIN_EVENTS_TO_SEND: "${process.env.MIN_EVENTS_TO_SEND || '3'}",
+          MIN_TIME_BETWEEN_SENDS: "${process.env.MIN_TIME_BETWEEN_SENDS || '1000'}"
+        } 
+      };
       var __importDefault = function(mod) {
         return (mod && mod.__esModule) ? mod : { "default": mod };
       };
@@ -71,7 +77,10 @@ router.get('/', (_req: Request, res: Response) => {
     // Set appropriate headers
     res.setHeader('Content-Type', 'application/javascript');
     res.setHeader('Cache-Control', 'public, max-age=86400'); // Cache for 1 day
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:50000');
+
+    // Use the request's origin or allow all origins in production
+    const origin = _req.headers.origin || '*';
+    res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
 
