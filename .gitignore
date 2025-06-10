@@ -1,0 +1,33 @@
+# Зависимости
+node_modules/
+package-lock.json
+yarn.lock
+
+# Собранные JS файлы
+dist/
+build/
+*.js
+*.js.map
+!jest.config.js
+
+# Исключение из исключения для трекера и других JS файлов, которые должны быть в репозитории
+!src/tracker/dist/**/*.js
+
+# TypeScript кэш сборки
+*.tsbuildinfo
+.tscache/
+.idea
+
+# Файлы окружения
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Логи
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn
