@@ -179,20 +179,24 @@ class TrackerImpl implements Tracker {
    */
   private async sendToServer(events: TrackEvent[], sync = false): Promise<boolean> {
     try {
-      // Create fetch options
+      // Create URL-encoded form data to avoid preflight requests
+      const formData = new URLSearchParams();
+      formData.append('events', JSON.stringify(events));
+
+      // Create fetch options with simple content type to avoid preflight
       const options: RequestInit = {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify(events),
+        body: formData,
       };
 
       // Add sync flag for beforeunload
       if (sync && navigator.sendBeacon) {
         // Use sendBeacon for sync requests if available
-        const blob = new Blob([JSON.stringify(events)], {
-          type: 'application/json',
+        const blob = new Blob([formData.toString()], {
+          type: 'application/x-www-form-urlencoded',
         });
         return navigator.sendBeacon(this.endpoint, blob);
       }

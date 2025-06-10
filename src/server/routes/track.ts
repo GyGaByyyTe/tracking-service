@@ -17,7 +17,22 @@ const router = Router();
  */
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const events = req.body;
+    // Handle both JSON and form-urlencoded formats
+    let events;
+    if (req.body.events) {
+      // Form-urlencoded format
+      try {
+        events = JSON.parse(req.body.events);
+      } catch (e) {
+        return res.status(422).json({
+          success: false,
+          errors: ['Invalid JSON in events parameter'],
+        });
+      }
+    } else {
+      // Direct JSON format (for backward compatibility)
+      events = req.body;
+    }
 
     // Validate events
     const validationResult = validateTrackEvents(events);

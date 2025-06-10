@@ -34,6 +34,7 @@ trackerApp.use(
   })
 );
 trackerApp.use(express.json());
+trackerApp.use(express.urlencoded({ extended: true }));
 
 // Configure middleware for static app
 staticApp.use(
