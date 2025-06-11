@@ -38,7 +38,6 @@ interface TrackEvent {
 class TrackerImpl implements Tracker {
   private buffer: TrackEvent[] = [];
   private sending = false;
-  private lastSendTime = 0;
   private sendTimeout: number | null = null;
   private readonly endpoint: string;
   private readonly minEventsToSend: number;
@@ -106,14 +105,10 @@ class TrackerImpl implements Tracker {
 
     // If no timeout is set, schedule one
     if (this.sendTimeout === null) {
-      const now = Date.now();
-      const timeSinceLastSend = now - this.lastSendTime;
-      const timeToWait = Math.max(0, this.minTimeBetweenSends - timeSinceLastSend);
-
+      this.sendEvents();
       this.sendTimeout = window.setTimeout(() => {
         this.sendTimeout = null;
-        this.sendEvents();
-      }, timeToWait);
+      }, this.minTimeBetweenSends);
     }
   }
 
@@ -134,9 +129,6 @@ class TrackerImpl implements Tracker {
     const events = [...this.buffer];
     this.buffer = [];
 
-    // Update last send time
-    this.lastSendTime = Date.now();
-
     // Send events to the server
     this.sendToServer(events, sync)
       .then(success => {
@@ -144,10 +136,11 @@ class TrackerImpl implements Tracker {
           // If sending failed, add events back to the buffer
           this.buffer = [...events, ...this.buffer];
 
-          // Wait a second before trying again
+          // Wait a second before return events to buffer
           window.setTimeout(() => {
             this.sending = false;
-            this.scheduleSend();
+            // If sending failed, add events back to the buffer
+            this.buffer = [...events, ...this.buffer];
           }, 1000);
         } else {
           // If sending succeeded, reset sending flag
@@ -160,13 +153,11 @@ class TrackerImpl implements Tracker {
         }
       })
       .catch(() => {
-        // If sending failed, add events back to the buffer
-        this.buffer = [...events, ...this.buffer];
-
-        // Wait a second before trying again
+        // Wait a second before return events to buffer
         window.setTimeout(() => {
           this.sending = false;
-          this.scheduleSend();
+          // If sending failed, add events back to the buffer
+          this.buffer = [...events, ...this.buffer];
         }, 1000);
       });
   }
